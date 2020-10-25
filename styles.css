@@ -1,0 +1,92 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  line-height: 1.5;
+  font-family: "Open Sans", sans-serif;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+main {
+  max-width: 40em;
+  margin: 0 auto;
+  padding: 0 1em;
+}
+
+h1,
+h2 {
+  color: darkmagenta;
+}
+
+form {
+  padding: 10px 0;
+  display: grid;
+  gap: 1em;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "number password"
+    "submit ...";
+}
+
+form label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#number-of-names {
+  grid-area: number;
+}
+
+#password {
+  grid-area: password;
+}
+
+button {
+  grid-area: submit;
+  width: 150px;
+  line-height: 32px;
+  background-color: white;
+  outline: none;
+  border: 1px solid darkmagenta;
+  border-radius: 3px;
+  color: darkmagenta;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.4;
+}
+
+ol {
+  padding: 0 0 0 1em;
+}
+
+#download-btn {
+  display: inline-block;
+  line-height: 32px;
+  padding: 0 2em;
+  background-color: white;
+  border: 1px solid darkmagenta;
+  border-radius: 3px;
+  color: darkmagenta;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+#download-btn:hover {
+  opacity: 0.4;
+}

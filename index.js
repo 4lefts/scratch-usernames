@@ -21,34 +21,43 @@ function makeRandomUsername() {
 // generates an string of n usernames and passwords, separated by newlines
 // usernames and passwords are comma-separated
 function generateUsernames(numberOfUsers, password){
-  const usernamesArr = 
-    Array.from(Array(numberOfUsers)).map(elem => {
+  return Array.from(Array(numberOfUsers)).map((elem) => {
             return `${makeRandomUsername()}, ${password || "password"}`
           })
-  return usernamesArr.join("\n")
+ 
 }
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const numberOfUsers = parseInt(numberInput.value);
-  const password = passwordInput.value;
-  const usernamesString = generateUsernames(numberOfUsers, password);
-  outputBox.innerText = usernamesString;
-  createCSVDownload(usernamesString)
-})
+// creates an <ol> of usernames to display on screen
+function buildNamesListHTML(usernamesArray){
+  const lis = usernamesArray.reduce((accum, item) => {
+    return `${accum}<li>${item}</li>`
+  }, '')
+  return `<h2>Generated Usernames</h2><ol>${lis}</ol>`
+}
 
-function createCSVDownload(usernamesString){
-  // make sure that the download button doens't already exist
-  // this can happen when the script is re-run
-  let downloadBtn = document.querySelector("#download-btn");
-  if (downloadBtn) document.body.removeChild(downloadBtn)
+// creates a .csv file of usernames and a button to download it
+function createCSVDownload(usernamesArray){
+  const usernamesString = usernamesArray.join("\n")
   const blob = new Blob([usernamesString], {type: 'text/csv;charset=utf-8'})
-  downloadBtn = document.createElement("a")
-  if(downloadBtn.download == undefined) return // show a browser incompatability error
+  const downloadBtn = document.createElement("a")
+  if(downloadBtn.download == undefined) return // show a browser incompatability error!
   const url = URL.createObjectURL(blob)
   downloadBtn.setAttribute("id", "download-btn")
   downloadBtn.setAttribute("href", url)
   downloadBtn.setAttribute("download", "usernames.csv")
   downloadBtn.innerText = "Download as .csv"
-  document.body.appendChild(downloadBtn)
+  outputBox.appendChild(downloadBtn)
 }
+
+// handler for form - removes old usernames (if there are any)
+// gets current form inputs and calls functions to generate usernames
+// display output on screen and create a csv file and download button
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  outputBox.innerHTML = ""; // make sure to remove old output
+  const numberOfUsers = parseInt(numberInput.value);
+  const password = passwordInput.value;
+  const usernamesArray = generateUsernames(numberOfUsers, password);
+  outputBox.innerHTML = buildNamesListHTML(usernamesArray);
+  createCSVDownload(usernamesArray)
+})

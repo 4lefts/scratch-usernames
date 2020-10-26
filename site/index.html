@@ -4,32 +4,105 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scratch User Names</title>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="styles.css">
-    <script src="./index.js" type="module"></script>
   </head>
   <body>
-    <main>
-
+    <header>
       <h1>Scratch User Names</h1>
-      <p>
-        A tool for teachers to randomly generate a downloadable .csv file of
-        random usernames for Scratch accounts for classes, with a predetermined, generic
-        password.
-      </p>
-      <p>The program can generate millions of possible usernames, but it is <em>possible</em> that it will generate duplicates or usernames that are already in use. It is probably worth making a few extra just in case.</p>
-      <form id="generate-form">
-       <label
-          >Number of usernames to generate:
-          <input type="number" min="1" max="70" value="10" id="number-of-names" />
-        </label>
-        <label
-         >Password for accounts:
-         <input type="text" id="password-input" placeholder="password" />
-        </label>
-        <button type="submit">Generate</button>
-      </form>
-      <div id="output-box"></div>
+    </header>
+    <main>
+      <section>
+        <p>
+          A tool for teachers to randomly generate a downloadable .csv file of
+          random usernames for Scratch accounts for classes, with a default, generic
+          password.
+        </p>
+        <p>The program can generate millions of different usernames, but it is <em>possible</em> that it will generate duplicates or usernames that are already in use. It is probably worth making a few extra just in case.</p>
+      </section>
+      <section x-data="usernames()">
+        <div id="controls">
+          <label>
+            Number of usernames to generate:
+            <input type="number" min="1" max="70" x-model.number="numberOfNames">
+          </label>
+          <label>
+            Default password
+            <input type="text" x-model="password">
+          </label>
+          <button x-on:click="generate()">Generate</button>
+        </div>
+        <div x-show.transition="names.length">
+          <ol>
+            <template x-for="name in names" :key="name">
+              <li x-text="name"></li>
+            </template>
+          </ol>
+          <a :href="downloadUrl" id="download-btn" :disabled="!downloadUrl">Download as .csv file</a>
+          <template x-if="!downloadUrl">
+            <p class="error">Sorry, your browser does not support .csv downloads, although you might be able to copy and paste the list above.</p>
+          </template>
+        </div>
+      </section>
     </main>
+    <footer x-data="year()">
+      <p>
+        &copy; Stephen Ball, <span x-text="year"></span>
+      </p>
+    </footer>
   </body>
+  <script>
+    function usernames(){
+      return {
+        numberOfNames: 10,
+        password: 'password',
+        names: [],
+        downloadUrl: '#',
+        generate: function(){
+          this.names = generateUsernames(this.numberOfNames, this.password)
+          this.downloadUrl = createCSVDownload(this.names)
+        }
+      }
+      // creates a .csv file of usernames and a button to download it
+      function createCSVDownload(usernamesArray){
+        // check compatibility
+        if(document.createElement('a').download == undefined) return false // show a browser incompatability error!
+        const usernamesString = usernamesArray.join("\n")
+        const blob = new Blob([usernamesString], {type: 'text/csv;charset=utf-8'})
+        const url = URL.createObjectURL(blob)
+        return url
+      }
+    }
+
+
+    // makes a single random username by joining with hyphens
+    // a random animal, a random adjective,
+    // and a random int from 00-99
+    function makeRandomUsername() {
+      const randomAdjective =
+        adjectives[(Math.random() * adjectives.length).toFixed()];
+      const randomAnimal = animals[(Math.random() * animals.length).toFixed()];
+      const randomInt = (Math.random() * 100).toFixed();
+      return `${randomAdjective}-${randomAnimal}-${randomInt}`;
+    }
+
+    // generates an string of n usernames and passwords, separated by newlines
+    // usernames and passwords are comma-separated
+    function generateUsernames(numberOfUsers, password){
+      return Array.from(Array(numberOfUsers)).map((elem) => 
+        (`${makeRandomUsername()}, ${password || "password"}`))
+    }
+
+    const animals = ["aardvark", "elephant", "civet", "frog", "toad", "dog", "terrier", "albatross", "tortoise", "alligator", "bulldog", "spaniel", "foxhound", "leopard", "angelfish", "ant", "anteater", "antelope", "fox", "hare", "wolf", "armadillo", "hornet", "bear", "avocet", "axolotl", "baboon", "camel", "badger", "bandicoot", "owl", "barnacle", "barracuda", "shark", "bat", "beagle", "collie", "dragon", "beaver", "beetle", "bengal tiger", "bird", "bison", "rhinoceros", "spider", "blobfish", "bloodhound", "whale", "bobcat", "bonobo", "orang-utan", "dolphin", "budgerigar", "buffalo", "mastiff", "bullfrog", "bumblebee", "butterfly", "caiman", "lizard", "capybara", "cassowary", "cat", "caterpillar", "catfish", "centipede", "chameleon", "cheetah", "retriever", "chicken", "chihuahua", "chimpanzee", "chinchilla", "chinook", "chipmunk", "clownfish", "coati", "cockatoo", "peccary", "buzzard", "tamarin", "cougar", "cow", "coyote", "crab", "macaque", "crane", "crocodile", "gorilla", "cuttlefish", "dachshund", "dalmatian", "deer", "dingo", "dodo", "donkey", "dormouse", "dragonfly", "duck", "dugong", "eagle", "echidna", "eel", "seal", "shrew", "emu", "falcon", "ferret", "flamingo", "flounder", "fly", "squirrel", "gecko", "gerbil", "snail", "clam", "panda", "gibbon", "monster", "giraffe", "glowworm", "goat", "goose", "gopher", "grasshopper", "lemur", "greyhound", "grouse", "guineapig", "guppy", "hamster", "harrier", "crow", "hedgehog", "heron", "himalayan", "hippopotamus", "honeybee", "horse", "monkey", "hummingbird", "hyena", "ibis", "iguana", "impala", "tiger", "insect", "jackal", "jaguar", "jellyfish", "jerboa", "kakapo", "kangaroo", "toucan", "kingfisher", "kiwi", "koala", "komododragon", "labrador", "ladybird", "lemming", "liger", "lion", "lionfish", "llama", "lobster", "lynx", "macaw", "magpie", "manatee", "mandrill", "mantaray", "mayfly", "meerkat", "megalodon", "millipede", "mole", "mongoose", "moorhen", "moose", "moth", "mouse", "mule", "newt", "nightingale", "ocelot", "octopus", "okapi", "opossum", "orangutan", "ostrich", "otter", "oyster", "panther", "parrot", "peacock", "pekingese", "pelican", "penguin", "persian", "pheasant", "pig", "pika", "pike", "piranha", "platypus", "pointer", "poodle", "porcupine", "porpoise", "possum", "prawn", "puffin", "pug", "puma", "marmoset", "quail", "quetzal", "quokka", "rabbit", "raccoon", "rat", "rattlesnake", "tarantula", "reindeer", "turtle", "robin", "salamander", "oryx", "scorpion", "slug", "urchin", "seahorse", "sheep", "shrimp", "sloth", "snake", "sparrow", "dogfish", "sponge", "squid", "starfish", "stingray", "stoat", "swan", "tapir", "termite", "turkey", "vulture", "wallaby", "walrus", "warthog", "wasp", "vole", "weasel", "whippet", "boar", "wildebeest", "wolverine", "wombat", "woodlouse", "woodpecker", "mammoth", "xerus", "yak", "zebra", "zebu", "zonkey"];
+    const adjectives = ["abrupt", "acidic", "adorable", "adventurous", "aggressive", "agitated", "alert", "aloof", "amiable", "amused", "annoyed", "antsy", "anxious", "appetizing", "apprehensive", "astonishing", "attractive", "average", "bewildered", "biting", "bland", "blushing", "bored", "brave", "bright", "broad", "bulky", "burly", "charming", "cheeky", "cheerful", "clean", "clear", "cloudy", "clueless", "clumsy", "colourful", "colossal", "combative", "comfortable", "confused", "contemplative", "convincing", "convoluted", "cooperative", "corny", "costly", "courageous", "crabby", "creepy", "crooked", "cumbersome", "curved", "dangerous", "dashing", "deep", "defeated", "defiant", "delicious", "delightful", "depressed", "determined", "diminutive", "distinct", "disturbed", "dizzy", "drab", "eager", "ecstatic", "elated", "elegant", "embarrassed", "enchanting", "encouraging", "energetic", "enormous", "enthusiastic", "envious", "exasperated", "excited", "exhilarated", "extensive", "exuberant", "fancy", "fantastic", "fierce", "filthy", "flat", "floppy", "fluttering", "frantic", "fresh", "friendly", "frothy", "frustrating", "funny", "fuzzy", "gaudy", "gentle", "giddy", "gigantic", "glamorous", "gleaming", "glorious", "gorgeous", "graceful", "gritty", "grubby", "grumpy", "handsome", "happy", "harebrained", "healthy", "helpful", "helpless", "high", "hollow", "homely", "huge", "hungry", "icy", "ideal", "immense", "impressionable", "intrigued", "irate", "irritable", "itchy", "jealous", "jittery", "jolly", "joyous", "foolish", "ghastly", "grieving", "horrific", "hurt", "juicy", "jumpy", "kind", "lackadaisical", "large", "lazy", "little", "lively", "livid", "lonely", "loose", "lovely", "lucky", "ludicrous", "macho", "magnificent", "mammoth", "maniacal", "massive", "melancholy", "melted", "miniature", "minute", "mistaken", "misty", "moody", "mortified", "motionless", "muddy", "mysterious", "narrow", "nasty", "naughty", "nervous", "nonchalant", "nonsensical", "nutty", "obedient", "oblivious", "obnoxious", "odd", "old", "outrageous", "panicky", "perfect", "perplexed", "petite", "petty", "plain", "pleasant", "poised", "precious", "prickly", "proud", "pungent", "quaint", "quizzical", "reassured", "relieved", "responsive", "ripe", "robust", "rough", "round", "salty", "scant", "scary", "scattered", "scrawny", "shaggy", "shaky", "shallow", "sharp", "shiny", "short", "silky", "silly", "slimy", "slippery", "small", "smiling", "smooth", "soggy", "solid", "sore", "sour", "sparkling", "spicy", "splendid", "spotless", "square", "steady", "steep", "sticky", "stormy", "stout", "straight", "strange", "strong", "stunning", "substantial", "successful", "superior", "swanky", "sweet", "teeny", "tender", "tense", "thankful", "thoughtful", "timely", "tricky", "trite", "uneven", "vast", "vexed", "victorious", "virtuous", "vivacious", "vivid", "wacky", "weary", "whimsical", "whopping", "wicked", "witty", "wobbly", "wonderful", "yummy", "zany", "zealous", "zippy"] 
+
+    function year(){
+      const d = new Date()
+      const year = d.getFullYear()
+      return{
+        year
+      }
+    }
+  </script>
 </html>

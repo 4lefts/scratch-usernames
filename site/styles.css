@@ -4,10 +4,20 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   line-height: 1.5;
   font-family: "Open Sans", sans-serif;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-width: 40em;
+  margin: 0 auto;
+  padding: 0 1em;
 }
 
 input,
@@ -15,31 +25,49 @@ button {
   font: inherit;
 }
 
-main {
-  max-width: 40em;
-  margin: 0 auto;
-  padding: 0 1em;
-}
-
 h1,
 h2 {
   color: darkmagenta;
 }
 
-form {
+#controls {
   padding: 10px 0;
   display: grid;
   gap: 1em;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-areas:
-    "number password"
-    "submit ...";
+    "number"
+    "password"
+    "generate";
 }
 
-form label {
+@media (min-width: 600px) {
+  #controls {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "number password"
+      "generate ...";
+  }
+}
+
+#controls label {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+input {
+  margin-top: 0.2em;
+  line-height: 32px;
+  padding: 0 5px;
+  border: 1px solid silver;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: darkmagenta;
 }
 
 #number-of-names {
@@ -51,7 +79,7 @@ form label {
 }
 
 button {
-  grid-area: submit;
+  grid-area: generate;
   width: 150px;
   line-height: 32px;
   background-color: white;
@@ -62,15 +90,22 @@ button {
   font-weight: 700;
   cursor: pointer;
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 button:hover {
   opacity: 0.4;
 }
 
+button:focus {
+  background-color: thistle;
+}
+
 ol {
-  padding: 0 0 0 1em;
+  border: 1px solid darkmagenta;
+  border-radius: 3px;
+  padding: 1em 10px;
+  list-style-position: inside;
 }
 
 #download-btn {
@@ -84,9 +119,27 @@ ol {
   text-decoration: none;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+#download-btn[disabled] {
+  color: silver;
+  border-color: silver;
+  cursor: default;
+}
+
+#download-btn[disabled]:hover {
+  opacity: 1;
 }
 
 #download-btn:hover {
   opacity: 0.4;
+}
+
+#download-btn:focus {
+  background-color: thistle;
+}
+
+.error {
+  font-weight: 700;
 }

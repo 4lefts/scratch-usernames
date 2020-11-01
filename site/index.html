@@ -39,7 +39,7 @@
               <li x-text="name"></li>
             </template>
           </ol>
-          <a :href="downloadUrl" id="download-btn" :disabled="!downloadUrl">Download as .csv file</a>
+          <a :href="downloadUrl" id="download-btn" :disabled="!downloadUrl" download="usernames.csv">Download as .csv file</a>
           <template x-if="!downloadUrl">
             <p class="error">Sorry, your browser does not support .csv downloads, although you might be able to copy and paste the list above.</p>
           </template>

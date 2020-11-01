@@ -8,8 +8,10 @@ Built using [AlpineJS](https://github.com/alpinejs/alpine)
 
 ## To do:
 
-- Redesign UI. Very dull at the moment
+- Redesign UI - dark. Very dull at the moment
   - Main page: title, footer, input boxes and generate button
   - Outputs user names as a grid of cards, plus "start again" button
   - "i" button to display "about" text
 - Allow cards to be downloaded/printed for handing out
+
+N.B "site" folder exists to allow drag and drop deployment to Netlify.
